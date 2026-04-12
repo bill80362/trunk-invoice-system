@@ -5,8 +5,6 @@ namespace Database\Seeders;
 use App\Models\CarrierType;
 use App\Models\Client;
 use App\Models\Driver;
-use App\Models\FreightRate;
-use App\Models\Location;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -23,13 +21,8 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
             'password' => bcrypt('password'),
         ]);
-
         // 地點
-        $taipei = Location::create(['name' => '台北']);
-        $taoyuan = Location::create(['name' => '桃園']);
-        $hsinchu = Location::create(['name' => '新竹']);
-        $taichung = Location::create(['name' => '台中']);
-        $kaohsiung = Location::create(['name' => '高雄']);
+        $this->call(LocationSeeder::class);
 
         // 司機
         Driver::create(['name' => '陳師傅', 'phone' => '0912345678']);
@@ -37,20 +30,15 @@ class DatabaseSeeder extends Seeder
         Driver::create(['name' => '林師傅', 'phone' => '0934567890']);
 
         // 托運方式
-        $fullTruck = CarrierType::create(['name' => '整車']);
-        $ltl = CarrierType::create(['name' => '零擔']);
+        foreach (['大車', '大車上櫃', '上櫃', '1大1小', '加重上櫃', '2大車', '3大車'] as $type) {
+            CarrierType::create(['name' => $type]);
+        }
 
         // 貨主
         Client::create(['name' => '甲公司', 'contact' => '張經理', 'phone' => '02-12345678']);
         Client::create(['name' => '乙公司', 'contact' => '李經理', 'phone' => '02-87654321']);
 
-        // 費率表
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $taoyuan->id, 'carrier_type_id' => $fullTruck->id, 'base_price' => 2500]);
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $hsinchu->id, 'carrier_type_id' => $fullTruck->id, 'base_price' => 3500]);
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $taichung->id, 'carrier_type_id' => $fullTruck->id, 'base_price' => 5000]);
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $kaohsiung->id, 'carrier_type_id' => $fullTruck->id, 'base_price' => 8000]);
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $taoyuan->id, 'carrier_type_id' => $ltl->id, 'base_price' => 1500]);
-        FreightRate::create(['origin_id' => $taipei->id, 'destination_id' => $hsinchu->id, 'carrier_type_id' => $ltl->id, 'base_price' => 2000]);
+        // 費率表（需自行設定）
 
         // 系統設定
         Setting::set('additional_stop_fee', '100');
