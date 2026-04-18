@@ -3,8 +3,9 @@
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
 use App\Filament\Resources\InvoiceResource;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Actions;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
 
 class EditInvoice extends EditRecord
 {
@@ -15,6 +16,20 @@ class EditInvoice extends EditRecord
     protected function getHeaderActions(): array
     {
         $actions = [];
+
+        // 依日期排序行程
+        $actions[] = Actions\Action::make('sortTripsByDate')
+            ->label('依日期排序')
+            ->icon('heroicon-o-arrows-up-down')
+            ->color('gray')
+            ->visible(fn () => ! $this->record->isConfirmed())
+            ->action(function () {
+                $trips = $this->data['invoiceTrips'] ?? [];
+
+                uasort($trips, fn (array $a, array $b) => ($a['date'] ?? '') <=> ($b['date'] ?? ''));
+
+                $this->data['invoiceTrips'] = $trips;
+            });
 
         // 確認請款單 — 只在草稿時顯示
         $actions[] = Actions\Action::make('confirm')
@@ -31,7 +46,7 @@ class EditInvoice extends EditRecord
                     'confirmed_at' => now(),
                 ]);
                 $this->refreshFormData(['status', 'confirmed_at']);
-                \Filament\Notifications\Notification::make()
+                Notification::make()
                     ->title('請款單已確認')
                     ->success()
                     ->send();
@@ -52,7 +67,7 @@ class EditInvoice extends EditRecord
                     'confirmed_at' => null,
                 ]);
                 $this->refreshFormData(['status', 'confirmed_at']);
-                \Filament\Notifications\Notification::make()
+                Notification::make()
                     ->title('請款單已解除鎖定')
                     ->warning()
                     ->send();

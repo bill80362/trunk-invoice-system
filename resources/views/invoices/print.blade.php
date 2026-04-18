@@ -175,12 +175,11 @@
                 <tr>
                     <td class="center">{{ $trip->date->format('m/d') }}</td>
                     <td>
-                        {{ $trip->origin->name }} →
-                        {{ $trip->invoiceTripStops->pluck('location.name')->implode('、') }}
+                        {{ $trip->origin->name }} → {{ $trip->invoiceTripStops->pluck('location.name')->implode(' → ') }}
                     </td>
                     <td class="center">{{ $trip->carrierType->name }}</td>
                     <td class="center">{{ $trip->weight ?? '' }}</td>
-                    <td class="number">${{ number_format((float) $trip->freight_fee, 0) }}</td>
+                    <td class="number">{{ (float) $trip->freight_fee !== 0.0 ? '$' . number_format((float) $trip->freight_fee, 0) : '' }}</td>
                     <td class="center">{{ $trip->driver->name }}</td>
                 </tr>
             @endforeach
