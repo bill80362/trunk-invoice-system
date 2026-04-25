@@ -185,7 +185,7 @@
             @endforeach
             <tr class="total-row">
                 <td colspan="4" style="text-align: right;">合計</td>
-                <td class="number">${{ number_format((float) $invoice->total_amount, 0) }}</td>
+                <td class="number">{{ (float) $invoice->total_amount !== 0.0 ? '$' . number_format((float) $invoice->total_amount, 0) : '' }}</td>
                 <td></td>
             </tr>
         </tbody>
