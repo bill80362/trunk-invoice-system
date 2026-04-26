@@ -52,7 +52,7 @@ jobs:
             cd /home/bill/trunk-invoice-system-cicd
 
             # 進入維護模式，避免使用者在部署期間遇到錯誤
-            php artisan down --retry=60 || true
+            # php artisan down --retry=60 || true
 
             # 拉取最新程式碼
             git pull origin main
@@ -61,8 +61,8 @@ jobs:
             composer install --no-dev --optimize-autoloader --no-interaction
 
             # 建置前端資源
-            npm ci
-            npm run build
+            # npm ci
+            # npm run build
 
             # 執行資料庫遷移
             php artisan migrate --force
@@ -77,4 +77,4 @@ jobs:
             php artisan octane:reload
 
             # 結束維護模式
-            php artisan up
+            # php artisan up
