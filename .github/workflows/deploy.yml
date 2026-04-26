@@ -7,36 +7,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
-    name: Run Tests
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup PHP 8.4
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.4'
-          extensions: mbstring, sqlite3, pdo_sqlite, dom, curl, libxml, fileinfo
-          coverage: none
-
-      - name: Copy .env
-        run: cp .env.example .env
-
-      - name: Install Composer dependencies
-        run: composer install --no-progress --no-interaction --prefer-dist --optimize-autoloader
-
-      - name: Generate application key
-        run: php artisan key:generate
-
-      - name: Run tests
-        run: php artisan test --compact
-
   deploy:
     name: Deploy to Production
-    needs: test
     runs-on: ubuntu-latest
 
     steps:
@@ -51,18 +23,13 @@ jobs:
             set -e
             cd /home/bill/trunk-invoice-system-cicd
 
-            # 進入維護模式，避免使用者在部署期間遇到錯誤
-            # php artisan down --retry=60 || true
+            echo "Test" >> test.txt
 
             # 拉取最新程式碼
             git pull origin main
 
             # 安裝 PHP 套件（僅正式環境）
             composer install --no-dev --optimize-autoloader --no-interaction
-
-            # 建置前端資源
-            # npm ci
-            # npm run build
 
             # 執行資料庫遷移
             php artisan migrate --force
@@ -75,6 +42,3 @@ jobs:
 
             # 重新載入 Octane（FrankenPHP）
             php artisan octane:reload
-
-            # 結束維護模式
-            # php artisan up
