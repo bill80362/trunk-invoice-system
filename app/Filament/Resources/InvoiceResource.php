@@ -5,9 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Models\FreightRate;
 use App\Models\Invoice;
+use App\Models\Location;
 use App\Models\Setting;
-use Filament\Forms;
 use Filament\Actions;
+use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -20,9 +21,9 @@ class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-document-text';
 
-    protected static string | \UnitEnum | null $navigationGroup = '請款管理';
+    protected static string|\UnitEnum|null $navigationGroup = '請款管理';
 
     protected static ?string $modelLabel = '請款單';
 
@@ -116,7 +117,6 @@ class InvoiceResource extends Resource
                             ->label('起點')
                             ->relationship('origin', 'name')
                             ->searchable()
-                            ->preload()
                             ->required()
                             ->live()
                             ->afterStateUpdated(fn (Get $get, Set $set) => static::calculateFreightFee($get, $set)),
@@ -124,7 +124,6 @@ class InvoiceResource extends Resource
                             ->label('托運方式')
                             ->relationship('carrierType', 'name')
                             ->searchable()
-                            ->preload()
                             ->required()
                             ->live()
                             ->afterStateUpdated(fn (Get $get, Set $set) => static::calculateFreightFee($get, $set)),
@@ -132,7 +131,6 @@ class InvoiceResource extends Resource
                             ->label('司機')
                             ->relationship('driver', 'name')
                             ->searchable()
-                            ->preload()
                             ->required(),
                         Forms\Components\Repeater::make('invoiceTripStops')
                             ->label('目的地')
@@ -143,7 +141,6 @@ class InvoiceResource extends Resource
                                     ->label('目的地')
                                     ->relationship('location', 'name')
                                     ->searchable()
-                                    ->preload()
                                     ->required()
                                     ->live()
                                     ->afterStateUpdated(function (Get $get, Set $set) {
@@ -169,14 +166,24 @@ class InvoiceResource extends Resource
                     ->columns(3)
                     ->columnSpanFull()
                     ->collapsible()
-                    ->itemLabel(fn (array $state): ?string =>
-                        ($state['date'] ?? '') . ' ' .
-                        (isset($state['origin_id']) ? \App\Models\Location::find($state['origin_id'])?->name ?? '' : '')
-                    )
+                    ->itemLabel(function (array $state): ?string {
+                        $date = $state['date'] ?? '';
+                        $originName = '';
+                        if (isset($state['origin_id']) && $state['origin_id']) {
+                            static $locationCache = [];
+                            $id = $state['origin_id'];
+                            if (! array_key_exists($id, $locationCache)) {
+                                $locationCache[$id] = Location::find($id)?->name ?? '';
+                            }
+                            $originName = $locationCache[$id];
+                        }
+
+                        return trim($date.' '.$originName) ?: null;
+                    })
                     ->visible(fn (?Invoice $record) => $record !== null),
                 Forms\Components\Placeholder::make('total_amount_display')
                     ->label('總金額')
-                    ->content(fn (?Invoice $record) => $record ? '$' . number_format((float) $record->total_amount, 2) : '$0.00')
+                    ->content(fn (?Invoice $record) => $record ? '$'.number_format((float) $record->total_amount, 2) : '$0.00')
                     ->visible(fn (?Invoice $record) => $record !== null),
             ])
             ->disabled(fn (?Invoice $record) => $record?->isConfirmed() ?? false);
