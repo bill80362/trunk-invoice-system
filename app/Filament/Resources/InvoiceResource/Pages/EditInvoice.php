@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
 use App\Filament\Resources\InvoiceResource;
+use App\Models\InvoiceTrip;
 use Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
@@ -24,11 +25,18 @@ class EditInvoice extends EditRecord
             ->color('gray')
             ->visible(fn () => ! $this->record->isConfirmed())
             ->action(function () {
-                $trips = $this->data['invoiceTrips'] ?? [];
+                InvoiceTrip::where('invoice_id', $this->record->id)
+                    ->orderBy('date')
+                    ->orderBy('id')
+                    ->get()
+                    ->each(function (InvoiceTrip $trip, int $index) {
+                        $trip->update(['sequence' => $index + 1]);
+                    });
 
-                uasort($trips, fn (array $a, array $b) => ($a['date'] ?? '') <=> ($b['date'] ?? ''));
-
-                $this->data['invoiceTrips'] = $trips;
+                Notification::make()
+                    ->title('已依日期重新排序')
+                    ->success()
+                    ->send();
             });
 
         // 確認請款單 — 只在草稿時顯示
