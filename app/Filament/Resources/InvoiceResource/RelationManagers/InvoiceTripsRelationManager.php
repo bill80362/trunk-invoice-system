@@ -87,6 +87,7 @@ class InvoiceTripsRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('date')
             ->defaultSort('sequence')
+            ->paginated([5, 10, 25, 50, 80, 100, 150, 200])
             ->columns([
                 TextColumn::make('date')
                     ->label('日期')
