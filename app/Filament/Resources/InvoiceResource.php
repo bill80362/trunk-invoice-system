@@ -136,6 +136,10 @@ class InvoiceResource extends Resource
                         'confirmed' => 'success',
                         default => 'gray',
                     }),
+                Tables\Columns\TextColumn::make('invoice_trips_count')
+                    ->label('行程數')
+                    ->counts('invoiceTrips')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('total_amount')
                     ->label('總金額')
                     ->money('TWD')
