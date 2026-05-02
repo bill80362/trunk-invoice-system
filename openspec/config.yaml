@@ -1,20 +1,39 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  ## Tech Stack
+  PHP 8.4 / Laravel 13 / Filament v5 / Livewire v4 / PHPUnit v12 / Laravel Pint
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  ## Domain
+  貨運請款單系統 (Freight Invoice Management System) for a logistics company.
+  Manages monthly freight invoices per client, with trip details and automatic fee calculation.
+
+  ## Core Models & Tables
+  - Client (clients): 貨主，每月向其開立請款單
+  - Invoice (invoices): 請款單，unique on (client_id, year, month)，status: draft | confirmed
+  - InvoiceTrip (invoice_trips): 行程明細，含 origin, driver, carrier_type, freight_fee, sequence
+  - InvoiceTripStop (invoice_trip_stops): 行程目的地站點，按 sequence 排序
+  - FreightRate (freight_rates): 費率表，unique on (origin_id, destination_id, carrier_type_id)
+  - Driver (drivers), Location (locations), CarrierType (carrier_types)
+  - Setting (settings): key-value，使用 Setting::get() / Setting::set()
+
+  ## Key Business Rules
+  1. freight_fee = base_price + (額外目的地數 × additional_stop_fee)
+     - base_price 查 FreightRate (origin + 第一目的地 + CarrierType)
+     - additional_stop_fee = Setting::get('additional_stop_fee', 0)
+  2. Invoice::recalculateTotal() 更新 total_amount = SUM(invoice_trips.freight_fee)
+  3. confirmed 狀態：行程明細唯讀；確認時記錄 confirmed_at
+  4. 解除鎖定：status → draft，清除 confirmed_at
+  5. 新建請款單自動帶入 Setting::get('issuer_name/issuer_address/issuer_phone')
+
+  ## Conventions
+  - `php artisan make:` for all new files
+  - Feature tests with factories; run `vendor/bin/pint --dirty --format agent` after PHP changes
+  - Filament v5: form(Schema $schema): Schema, Section from Filament\Schemas\Components\Section
+  - Actions from Filament\Actions\*, not Filament\Tables\Actions\*
+
+rules:
+  tasks:
+    - Break tasks into small, independently testable chunks
+    - Each task should include what tests to write
+    - Reference the relevant Model or Filament Resource by name
