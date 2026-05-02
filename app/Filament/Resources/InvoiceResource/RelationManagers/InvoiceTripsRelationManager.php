@@ -21,6 +21,13 @@ class InvoiceTripsRelationManager extends RelationManager
 
     protected static ?string $title = '行程明細';
 
+    public function getTitle(): string|\Illuminate\Contracts\Support\Htmlable
+    {
+        $count = $this->getOwnerRecord()->invoiceTrips()->count();
+
+        return "行程明細（共 {$count} 筆）";
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
