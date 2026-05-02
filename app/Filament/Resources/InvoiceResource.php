@@ -147,6 +147,7 @@ class InvoiceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->defaultSort('created_at', 'desc')
+            ->paginated([5, 10, 25, 50, 80, 100, 150, 200])
             ->actions([
                 Actions\EditAction::make(),
                 Actions\DeleteAction::make(),
