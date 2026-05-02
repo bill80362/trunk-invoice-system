@@ -100,6 +100,10 @@ class InvoiceResource extends Resource
                     ])->columns(3)
                     ->collapsed(fn (?Invoice $record) => $record !== null)
                     ->collapsible(),
+                Forms\Components\Placeholder::make('trip_count_display')
+                    ->label('行程總數')
+                    ->content(fn (?Invoice $record) => $record ? $record->invoiceTrips()->count().' 筆' : '0 筆')
+                    ->visible(fn (?Invoice $record) => $record !== null),
                 Forms\Components\Placeholder::make('total_amount_display')
                     ->label('總金額')
                     ->content(fn (?Invoice $record) => $record ? '$'.number_format((float) $record->total_amount, 2) : '$0.00')
