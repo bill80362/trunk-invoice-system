@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\FreightRateResource\Pages;
 
 use App\Filament\Resources\FreightRateResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListFreightRates extends ListRecords
@@ -12,7 +13,7 @@ class ListFreightRates extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

@@ -6,8 +6,8 @@ use App\Filament\Resources\FreightRateResource\Pages;
 use App\Models\FreightRate;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -15,9 +15,9 @@ class FreightRateResource extends Resource
 {
     protected static ?string $model = FreightRate::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-currency-dollar';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-currency-dollar';
 
-    protected static string | \UnitEnum | null $navigationGroup = '費率設定';
+    protected static string|\UnitEnum|null $navigationGroup = '費率設定';
 
     protected static ?string $modelLabel = '費率表';
 
