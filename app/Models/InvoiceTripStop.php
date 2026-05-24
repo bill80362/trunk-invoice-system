@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class InvoiceTripStop extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['invoice_trip_id', 'location_id', 'sequence'];
 
     public function invoiceTrip(): BelongsTo

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CarrierTypeResource\Pages;
 
 use App\Filament\Resources\CarrierTypeResource;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListCarrierTypes extends ListRecords
@@ -12,7 +13,7 @@ class ListCarrierTypes extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            \Filament\Actions\CreateAction::make(),
+            CreateAction::make(),
         ];
     }
 }

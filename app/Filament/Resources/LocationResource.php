@@ -6,8 +6,8 @@ use App\Filament\Resources\LocationResource\Pages;
 use App\Models\Location;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -15,9 +15,9 @@ class LocationResource extends Resource
 {
     protected static ?string $model = Location::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-map-pin';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
 
-    protected static string | \UnitEnum | null $navigationGroup = '基礎資料';
+    protected static string|\UnitEnum|null $navigationGroup = '基礎資料';
 
     protected static ?string $modelLabel = '地點';
 

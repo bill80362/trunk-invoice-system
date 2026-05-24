@@ -6,8 +6,8 @@ use App\Filament\Resources\CarrierTypeResource\Pages;
 use App\Models\CarrierType;
 use Filament\Actions;
 use Filament\Forms;
-use Filament\Schemas\Schema;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables;
 use Filament\Tables\Table;
 
@@ -15,9 +15,9 @@ class CarrierTypeResource extends Resource
 {
     protected static ?string $model = CarrierType::class;
 
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-truck';
+    protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-truck';
 
-    protected static string | \UnitEnum | null $navigationGroup = '基礎資料';
+    protected static string|\UnitEnum|null $navigationGroup = '基礎資料';
 
     protected static ?string $modelLabel = '托運方式';
 
